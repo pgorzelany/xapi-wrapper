@@ -7,5 +7,5 @@ node_modules
 # NPM
 npm-debug.log
 
-old_xapi_wrapper.coffee
-old_xapi_wrapper.js
+old_xapi-wrapper.coffee
+old_xapi-wrapper.js

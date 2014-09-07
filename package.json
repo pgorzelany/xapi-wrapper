@@ -1,0 +1,38 @@
+{
+  "name": "xapi-connector",
+  "description": "Simple async wrapper for xAPI written in Coffeescript",
+  "keywords": [
+    "xAPI",
+    "xAPI wrapper",
+    "xTrade Brokers",
+    "xTrade",
+    "Algotraiding",
+    "Stocks",
+    "CFD",
+    "Forex",
+    "ETF",
+    "Indexes",
+    "Stock market",
+    "Stock market api"
+  ],
+  "author": "Piotr Gorzelany",
+  "version": "0.1.0",
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "main": "./lib/xapi-wrapper.js",
+  "homepage": "https://github.com/pgorzelany/xapi-wrapper",
+  "bugs": "https://github.com/pgorzelany/xapi-wrapper/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pgorzelany/xapi-wrapper"
+  },
+  "dependencies": {
+    "coffee-script": "1.x",
+    "xapi-connector": ">=0.7.0 <2.0.0"
+  },
+  "scripts": {
+    "prepublish": "coffee -o lib/ -c src/"
+  }
+}

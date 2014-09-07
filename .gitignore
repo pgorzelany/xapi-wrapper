@@ -1,0 +1,11 @@
+# OS X specific ignores
+.DS_Store
+
+# Node modules
+node_modules
+
+# NPM
+npm-debug.log
+
+old_xapi_wrapper.coffee
+old_xapi_wrapper.js

@@ -1,5 +1,5 @@
 {
-  "name": "xapi-connector",
+  "name": "xapi-wrapper",
   "description": "Simple async wrapper for xAPI written in Coffeescript",
   "keywords": [
     "xAPI",

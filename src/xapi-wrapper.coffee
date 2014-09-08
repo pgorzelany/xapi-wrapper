@@ -1,6 +1,8 @@
 Connector = require('xapi-connector')
 Emitter = require('events').EventEmitter
 
+print = (msg) -> console.log(msg)
+
 class Wrapper
   constructor: (@server_url, @conn_port, @stream_port, @username, @password) ->
     @conn_status = 0
@@ -28,12 +30,13 @@ class Wrapper
       )
 
     @_connector.on('message', (msg) =>
-      console.log("Received a msg #{msg}")
+      #console.log("Received a msg #{msg}")
       try
         res = JSON.parse(msg)
         if res.status == true
-          req_id = res.custommTag
+          req_id = parseInt(res.customTag)
           req = @_requests[req_id]
+          #print("req_id: #{req_id}, requests: #{JSON.stringify(@_requests)}")
           if req.customTag? then res.customTag = req.customTag else delete res.customTag
           @_emitter.emit(req_id, null, req, res) #emits the req_id, this enables callbacks for individual requests
           @_emitter.emit(req.command, null, req, res) #emits the command name, this enables event handlers for commands
@@ -53,23 +56,23 @@ class Wrapper
 
   _send: (command, args, custom_tag, callback) ->
     req_id = @_req_id += 1
-    if callback? then @_emitter.on(req_id, callback)
-    @_requests.req_id =
+    if callback? then @.on(req_id, callback)
+    @_requests[req_id] =
       command: command,
       arguments: args if args?
       customTag: custom_tag if custom_tag?
-    req = @_connector.buildCommand(command, args, req_id)
-    console.log("Sending message #{req}")
+    req = @_connector.buildCommand(command, args, req_id.toString())
+    #console.log("Sending message #{req}")
     @_connector.send(req)
 
   login: (custom_tag, callback) ->
-    @_send('login', {userId: @username, password: @password}, custom_tag)
+    @_send('login', {userId: @username, password: @password}, custom_tag, callback)
 
   logout: (custom_tag, callback) ->
-    @_send('logout', null, custom_tag)
+    @_send('logout', null, custom_tag, callback)
 
   ping: (custom_tag, callback) ->
-    @_send('ping', null, custom_tag)
+    @_send('ping', null, custom_tag, callback)
 
   connect: () ->
     @_connector.connect()

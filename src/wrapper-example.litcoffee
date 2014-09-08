@@ -13,11 +13,47 @@ Define statics
     SERVER_URL = 'xapia.x-station.eu'
     CONN_PORT = '5144' #provide port
     STREAM_PORT = '5145' #provide stream port
-    USERNAME = '177509' #provide a valid username
-    PASSWORD = 'ystk7C' #provide a valid password
+    USERNAME = '201870' #provide a valid username
+    PASSWORD = 'rz3smI' #provide a valid password
 
 Helper functions
 
     print = (msg) ->
       console.log(msg)
       return
+
+Create the wrapper
+
+    wrapper = new Wrapper(SERVER_URL, CONN_PORT, STREAM_PORT, USERNAME, PASSWORD)
+
+Add handlers
+
+    wrapper.on('open', () ->
+      print('Successfuly connected, login in')
+      #wrapper.ping()
+      wrapper.login()
+      #wrapper.disconnect()
+    )
+
+    wrapper.on('close', () ->
+      print('Connection closed')
+    )
+
+    wrapper.on('error', () ->
+      print('Connection error')
+    )
+
+    wrapper.on('login', (error, req, res) ->
+      print("Received response to command login")
+      print("This is the request: #{req} \nThis is the response #{res}")
+      print("login out")
+      wrapper.logout()
+    )
+
+    wrapper.on('logout', (error, req, res) ->
+      print("logged out hopefully")
+    )
+
+Connect to the api
+
+    wrapper.connect()

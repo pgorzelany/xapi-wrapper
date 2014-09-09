@@ -43,17 +43,21 @@ Add handlers
       print('Connection error')
     )
 
-    wrapper.on('login', (err, req, res) ->
+    wrapper.on('login', (req, res) ->
       print("Received response to command login")
       print("This is the request: #{JSON.stringify(req)} \nThis is the response #{JSON.stringify(res)}")
-      wrapper.ping(null, (err, req, res) ->
-        print("Piiiing")
-      )
       print("login out")
-      wrapper.logout(null, (err, req, res) ->
-        print("This is a direct callback for this particular logout request: #{JSON.stringify(req)}. The response is #{JSON.stringify(res)}")
-        wrapper.disconnect()
-      )
+      wrapper.logout()
+    )
+
+    wrapper.on('logout', (req, res) ->
+      print("Successfuly loged out")
+      wrapper.disconnect()
+    )
+
+    wrapper.on('apiError', (req, err) ->
+      print("The api returned a negative response to request: #{JSON.stringify(req)}")
+      print("#{JSON.stringify(err)}")
     )
 
 

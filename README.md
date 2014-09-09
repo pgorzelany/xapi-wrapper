@@ -8,7 +8,7 @@ Node version 0.10 or higher (testes on Node v0.10.30)
 
 ##Instalation
 
-
+`npm install xapi-wrapper`
 
 ##Example wrapper usage
 
@@ -48,6 +48,8 @@ List of events:
 - error
 
 - close
+
+- apiError
 
 - login
 

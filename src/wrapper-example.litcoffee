@@ -76,6 +76,11 @@ Define handlers for the stream
       print("Received indicator data: #{JSON.stringify(msg, null, 4)}")
     )
 
+    #example of using plugins
+    wrapper.useStream((msg, client) ->
+      print("I AM SUCH A GOOD PLUGIN WOOO!")
+    )
+
 
 Connect to the api
 

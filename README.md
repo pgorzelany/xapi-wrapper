@@ -69,7 +69,17 @@ List of events:
 
 ...
 
-###Wrapper.login([args], [customTag])
+###Wrapper.use([event], plugin)
+
+This method enables plugins. The plugin is simply a function that should receive 3 parameters (req, res, client).
+The plugin function will be called on the specified event, or if no event is specified it will be called for every message.
+The plugin function can internally make use of the client (wrapper) methods.
+
+###Wrapper.useStream([event], plugin)
+
+Similar to the use method above, only for the stream. The plugin should take 2 parameters (msg, client).
+
+###Wrapper.login([customTag])
 
 Logs user to the xapi server
 

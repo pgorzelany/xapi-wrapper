@@ -39,8 +39,8 @@ class Wrapper
         if res.status == true
           #print("req_id: #{req_id}, requests: #{JSON.stringify(@_requests)}")
           #@_emitter.emit(req_id, null, req, res) #emits the req_id, this enables callbacks for individual requests
-          @_emitter.emit('_message', req, res) #emits a private _message event and passes every message, this enables plugins
-          @_emitter.emit(req.command, req, res) #emits the command name, this enables event handlers for commands
+          @_emitter.emit('_message', req, res, @) #emits a private _message event and passes every message, this enables plugins
+          @_emitter.emit(req.command, req, res, @) #emits the command name, this enables event handlers for commands
         else
           @_emitter.emit('apiError', req, res)
       catch e
@@ -51,8 +51,8 @@ class Wrapper
       #console.log("Received a stream msg #{msg}")
       try
         msg = JSON.parse(msg)
-        @_streamEmitter.emit('_message', msg) #enables plugins for stream
-        @_streamEmitter.emit(msg.command, msg)
+        @_streamEmitter.emit('_message', msg, @) #enables plugins for stream
+        @_streamEmitter.emit(msg.command, msg, @)
       catch e
         console.log(e)
       )

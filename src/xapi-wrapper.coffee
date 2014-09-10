@@ -7,7 +7,6 @@ class Wrapper
   constructor: (@server_url, @conn_port, @stream_port, @username, @password) ->
     @conn_status = 0
     @stream_status = 0
-    @stream_status = 0
     @_req_id = 0
     @_stream_session_id = null
     @_requests = {}
@@ -25,9 +24,9 @@ class Wrapper
       @_emitter.emit('close')
       )
 
-    @_connector.on('error', () =>
+    @_connector.on('error', (err) =>
       @conn_status = 3
-      @_emitter.emit('error')
+      @_emitter.emit('error', err)
       )
 
     @_connector.on('message', (msg) =>
@@ -40,8 +39,8 @@ class Wrapper
         if res.status == true
           #print("req_id: #{req_id}, requests: #{JSON.stringify(@_requests)}")
           #@_emitter.emit(req_id, null, req, res) #emits the req_id, this enables callbacks for individual requests
+          @_emitter.emit('_message', req, res) #emits a private _message event and passes every message, this enables plugins
           @_emitter.emit(req.command, req, res) #emits the command name, this enables event handlers for commands
-          @_emitter.emit('_message', JSON.stringify(res)) #emits a private _message event and passes every message, this enables middleware
         else
           @_emitter.emit('apiError', req, res)
       catch e
@@ -49,29 +48,31 @@ class Wrapper
       )
 
     @_connector.onStream('message', (msg) =>
+      #console.log("Received a stream msg #{msg}")
       try
         msg = JSON.parse(msg)
-        @_streamEmitter(msg.command, msg)
+        @_streamEmitter.emit('_message', msg) #enables plugins for stream
+        @_streamEmitter.emit(msg.command, msg)
       catch e
         console.log(e)
       )
 
-    @_connector.onStream('open', () ->
+    @_connector.onStream('open', () =>
       @stream_status = 1
       @_streamEmitter.emit('open')
       )
 
-    @_connector.onStream('close', () ->
+    @_connector.onStream('close', () =>
       @stream_status = 2
       @_streamEmitter.emit('close')
       )
 
-    @_connector.onStream('error', () ->
+    @_connector.onStream('error', (err) =>
       @stream_status = 3
-      @_streamEmitter.emit('error')
+      @_streamEmitter.emit('error', err)
       )
 
-    @on('login', (req, res) ->
+    @on('login', (req, res) =>
       @_stream_session_id = res.streamSessionId
       )
 
@@ -92,6 +93,24 @@ class Wrapper
   onStream: (event, callback) ->
     @_streamEmitter.on(event, callback)
 
+  #EXPERIMENTAL
+  use: (event, callback) ->
+    if arguments.length == 2
+      @on(event, callback)
+    else
+      @on('_message', callback)
+
+  #EXPERIMENTAL
+  useStream: (callback) ->
+    if arguments.length == 2
+      @onStream(event, callback)
+    else
+      @onStream('_message', callback)
+
+  getQue: () -> @_connector.getQue()
+
+  getStreamQue: () -> @_connector.getStreamQue()
+
   _send: (command, args, custom_tag) ->
     req_id = @_req_id += 1
     #if callback? then @.on(req_id, callback)
@@ -103,11 +122,21 @@ class Wrapper
     #console.log("Sending message #{req}")
     @_connector.send(req)
 
+  _sendStream: (msg) ->
+    #print(msg)
+    @_connector.sendStream(msg)
+
   connect: () ->
     @_connector.connect()
 
   disconnect: () ->
     @_connector.disconnect()
+
+  connectStream: () ->
+    @_connector.connectStream()
+
+  disconnectStream: () ->
+    @_connector.disconnectStream()
 
   login: (custom_tag) ->
     @_send('login', {userId: @username, password: @password}, custom_tag)
@@ -131,98 +160,98 @@ class Wrapper
     @_send('deletePending', args, custom_tag)
 
   getAccountIndicators: (custom_tag) ->
-    @_send('getAccountIndicators', custom_tag)
+    @_send('getAccountIndicators', null, custom_tag)
 
-  getAccountInfo: (args, custom_tag) ->
-    @_send('getAccountInfo', args, custom_tag)
+  getAccountInfo: (custom_tag) ->
+    @_send('getAccountInfo', null, custom_tag)
 
-  getAllSymbols: (args, custom_tag) ->
-    @_send('getAllSymbols', args, custom_tag)
+  getAllSymbols: (custom_tag) ->
+    @_send('getAllSymbols', null, custom_tag)
 
-  getCalendar: (args, custom_tag) ->
-    @_send('getCalendar', args, custom_tag)
+  getCalendar: (custom_tag) ->
+    @_send('getCalendar', null, custom_tag)
 
   getCandles: (args, custom_tag) ->
     @_send('getCandles', args, custom_tag)
 
-  getCashOperationsHistory: (args) ->
+  getCashOperationsHistory: (args, custom_tag) ->
     @_send('getCashOperationsHistory', args, custom_tag)
 
-  getCommisionsDef: (args) ->
+  getCommisionsDef: (args, custom_tag) ->
     @_send('getCommisionsDef', args, custom_tag)
 
-  getlbsHistory: (args) ->
+  getlbsHistory: (args, custom_tag) ->
     @_send('getlbsHistory', args, custom_tag)
 
-  getMarginTrade: (args) ->
+  getMarginTrade: (args, custom_tag) ->
     @_send('getMarginTrade', args, custom_tag)
 
-  getNews: (args) ->
+  getNews: (args, custom_tag) ->
     @_send('getNews', args, custom_tag)
 
-  getOrderStatus: (args) ->
+  getOrderStatus: (args, custom_tag) ->
     @_send('getOrderStatus', args, custom_tag)
 
-  getProfitCalculations: (args) ->
+  getProfitCalculations: (args, custom_tag) ->
     @_send('getProfitCalculations', args, custom_tag)
 
-  getServerTime: (args) ->
+  getServerTime: (args, custom_tag) ->
     @_send('getServerTime', args, custom_tag)
 
-  getStepRules: (args) ->
-    @_send('getStepRules', args, custom_tag)
+  getStepRules: (custom_tag) ->
+    @_send('getStepRules', null, custom_tag)
 
-  getSymbol: (args) ->
+  getSymbol: (args, custom_tag) ->
     @_send('getSymbol', args, custom_tag)
 
-  getTickPrices: (args) ->
+  getTickPrices: (args, custom_tag) ->
     @_send('getTickPrices', args, custom_tag)
 
-  getTradeRecords: (args) ->
+  getTradeRecords: (args, custom_tag) ->
     @_send('getTradeRecords', args, custom_tag)
 
-  getTrades: (args) ->
-    @_send('getTrades', args, custom_tag)
+  getTrades: (custom_tag) ->
+    @_send('getTrades', null, custom_tag)
 
-  getTradesHistory: (args) ->
+  getTradesHistory: (args, custom_tag) ->
     @_send('getTradesHistory', args, custom_tag)
 
-  getTradingHours: (args) ->
+  getTradingHours: (args, custom_tag) ->
     @_send('getTradingHours', args, custom_tag)
 
-  getVersion: (args) ->
-    @_send('getVersion', args, custom_tag)
+  getVersion: (custom_tag) ->
+    @_send('getVersion', null, custom_tag)
 
-  modifyPending: (args) ->
+  modifyPending: (args, custom_tag) ->
     @_send('modifyPending', args, custom_tag)
 
-  modifyPosition: (args) ->
+  modifyPosition: (args, custom_tag) ->
     @_send('modifyPosition', args, custom_tag)
 
 
-  subscribeAccountIndicators: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getAccountIndicators', @_stream_session_id))
+  subscribeAccountIndicators: () ->
+    @_sendStream(@_connector.buildStreamCommand('getAccountIndicators', @_stream_session_id))
 
-  subscribeCandles: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getCandles', @_stream_session_id))
+  subscribeCandles: () ->
+    @_sendStream(@_connector.buildStreamCommand('getCandles', @_stream_session_id))
 
-  subscribeKeepAlive: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getKeepAlive', @_stream_session_id))
+  subscribeKeepAlive: () ->
+    @_sendStream(@_connector.buildStreamCommand('getKeepAlive', @_stream_session_id))
 
-  subscribeNews: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getNews', @_stream_session_id))
+  subscribeNews: () ->
+    @_sendStream(@_connector.buildStreamCommand('getNews', @_stream_session_id))
 
-  subscribeOrderStatus: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getOrderStatus', @_stream_session_id))
+  subscribeOrderStatus: () ->
+    @_sendStream(@_connector.buildStreamCommand('getOrderStatus', @_stream_session_id))
 
-  subscribeProfits: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getProfits', @_stream_session_id))
+  subscribeProfits: () ->
+    @_sendStream(@_connector.buildStreamCommand('getProfits', @_stream_session_id))
 
-  subscribeTickPrices: (stream_session_id, symbols) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getTickPrices', @_stream_session_id, symbols))
+  subscribeTickPrices: (symbols) ->
+    @_sendStream(@_connector.buildStreamCommand('getTickPrices', @_stream_session_id, symbols))
 
-  subscribeTrades: (stream_session_id) ->
-    @_connector.sendStream(@_connector.buildStreamCommand('getTrades', @_stream_session_id))
+  subscribeTrades: () ->
+    @_sendStream(@_connector.buildStreamCommand('getTrades', @_stream_session_id))
 
 
 module.exports = Wrapper

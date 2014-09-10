@@ -1,1 +1,3 @@
-- publish to npm
+- check methods of infividual commands for args
+- complete the doc with all events
+- add unsubscribe methods

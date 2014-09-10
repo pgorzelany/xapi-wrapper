@@ -30,37 +30,57 @@ Add handlers
 
     wrapper.on('open', () ->
       print('Successfuly connected, login in')
-      #wrapper.ping()
-      wrapper.login('hello login')
-      #wrapper.disconnect()
+      wrapper.login()
     )
 
     wrapper.on('close', () ->
       print('Connection closed')
     )
 
-    wrapper.on('error', () ->
-      print('Connection error')
+    wrapper.on('error', (err) ->
+      print("Connection error: #{err}")
     )
 
     wrapper.on('login', (req, res) ->
-      print("Received response to command login")
-      print("This is the request: #{JSON.stringify(req)} \nThis is the response #{JSON.stringify(res)}")
-      print("login out")
-      wrapper.logout()
+      print("Succesfuly logged in, connecting to stream")
+      wrapper.connectStream()
     )
 
     wrapper.on('logout', (req, res) ->
       print("Successfuly loged out")
+      wrapper.disconnectStream()
       wrapper.disconnect()
     )
 
     wrapper.on('apiError', (req, err) ->
-      print("The api returned a negative response to request: #{JSON.stringify(req)}")
-      print("#{JSON.stringify(err)}")
+      print("The api returned a negative response to request: #{JSON.stringify(req, null, 4)}")
+      print("#{JSON.stringify(err, null, 4)}")
+    )
+
+Define handlers for the stream
+
+    wrapper.onStream('open', () ->
+      print("Successfuly connected to stream, subscribing to indicators")
+      wrapper.subscribeAccountIndicators()
+    )
+
+    wrapper.onStream('close', () ->
+      print("Stream closed")
+    )
+
+    wrapper.onStream('error', (err) ->
+      print("Stream error: #{err}")
+    )
+
+    wrapper.onStream('indicators', (msg) ->
+      print("Received indicator data: #{JSON.stringify(msg, null, 4)}")
     )
 
 
 Connect to the api
 
     wrapper.connect()
+    setTimeout(() ->
+      print('Login out')
+      wrapper.logout()
+    ,10000)

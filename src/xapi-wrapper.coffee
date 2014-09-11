@@ -21,11 +21,13 @@ class Wrapper
 
     @_connector.on('close', () =>
       @conn_status = 2
+      print("CONNECTION CLOSED")
       @_emitter.emit('close')
       )
 
     @_connector.on('error', (err) =>
       @conn_status = 3
+      print("CONNECTION ERROR")
       @_emitter.emit('error', err)
       )
 
@@ -64,11 +66,13 @@ class Wrapper
 
     @_connector.onStream('close', () =>
       @stream_status = 2
+      print("STREAM CLOSED")
       @_streamEmitter.emit('close')
       )
 
     @_connector.onStream('error', (err) =>
       @stream_status = 3
+      print("STREAM ERROR")
       @_streamEmitter.emit('error', err)
       )
 
@@ -94,18 +98,12 @@ class Wrapper
     @_streamEmitter.on(event, callback)
 
   #EXPERIMENTAL
-  use: (event, callback) ->
-    if arguments.length == 2
-      @on(event, callback)
-    else
-      @on('_message', callback)
+  use: (plugin) ->
+    plugin(@)
 
   #EXPERIMENTAL
-  useStream: (callback) ->
-    if arguments.length == 2
-      @onStream(event, callback)
-    else
-      @onStream('_message', callback)
+  useStream: (plugin) ->
+    plugin(@)
 
   getQue: () -> @_connector.getQue()
 

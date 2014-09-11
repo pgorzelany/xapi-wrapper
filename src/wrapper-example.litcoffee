@@ -33,14 +33,6 @@ Add handlers
       wrapper.login()
     )
 
-    wrapper.on('close', () ->
-      print('Connection closed')
-    )
-
-    wrapper.on('error', (err) ->
-      print("Connection error: #{err}")
-    )
-
     wrapper.on('login', (req, res) ->
       print("Succesfuly logged in, connecting to stream")
       wrapper.connectStream()
@@ -64,21 +56,15 @@ Define handlers for the stream
       wrapper.subscribeAccountIndicators()
     )
 
-    wrapper.onStream('close', () ->
-      print("Stream closed")
-    )
-
-    wrapper.onStream('error', (err) ->
-      print("Stream error: #{err}")
-    )
-
     wrapper.onStream('indicators', (msg) ->
       print("Received indicator data: #{JSON.stringify(msg, null, 4)}")
     )
 
     #example of using plugins
-    wrapper.useStream((msg, client) ->
-      print("I AM SUCH A GOOD PLUGIN WOOO!")
+    wrapper.useStream((wrapper) ->
+      wrapper.onStream('indicators', (msg) ->
+        print("This is a plugin woooooooot!")
+      )
     )
 
 

@@ -61,7 +61,7 @@ Define handlers for the stream
     )
 
     #example of using plugins
-    wrapper.useStream((wrapper) ->
+    wrapper.use((wrapper) ->
       wrapper.onStream('indicators', (msg) ->
         print("This is a plugin woooooooot!")
       )

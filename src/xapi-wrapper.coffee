@@ -101,10 +101,6 @@ class Wrapper
   use: (plugin) ->
     plugin(@)
 
-  #EXPERIMENTAL
-  useStream: (plugin) ->
-    plugin(@)
-
   getQue: () -> @_connector.getQue()
 
   getStreamQue: () -> @_connector.getStreamQue()

@@ -1,3 +1,5 @@
+[![NPM Version](https://img.shields.io/npm/v/xapi-wrapper.svg?style=flat)](https://www.npmjs.org/package/xapi-wrapper)
+
 ##Overview
 
 Simple async [xAPI 3.0](http://developers.xstore.pro/) wrapper for [Node.js](http://nodejs.org/) written in [Coffeescript](http://coffeescript.org/).

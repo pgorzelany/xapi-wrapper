@@ -58,10 +58,6 @@ The plugin function can internally make use of the client (wrapper) methods. For
 
 WARNING: The pugin can alter the way the client works, use with caution (experimental feature)!
 
-###Wrapper.useStream(plugin)
-
-Similar to the use method above, only for the stream.
-
 ###Wrapper.login([customTag])
 
 Logs user to the xapi server

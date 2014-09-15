@@ -8,6 +8,11 @@ Import the wrapper.
 
     Wrapper = require('../lib/xapi-wrapper.js')
 
+Import plugins
+
+    plugins = require("xapi-plugins")
+    autoRedirect = plugins.autoRedirect
+
 Define statics
 
     SERVER_URL = 'xapia.x-station.eu'
@@ -25,6 +30,10 @@ Helper functions
 Create the wrapper
 
     wrapper = new Wrapper(SERVER_URL, CONN_PORT, STREAM_PORT, USERNAME, PASSWORD)
+
+As an example, we will use the autoRedirect plugin. It redirects the connection on redirect message from the xAPI
+
+    wrapper.use(autoRedirect)
 
 Add handlers
 
@@ -58,13 +67,6 @@ Define handlers for the stream
 
     wrapper.onStream('indicators', (msg) ->
       print("Received indicator data: #{JSON.stringify(msg, null, 4)}")
-    )
-
-    #example of using plugins
-    wrapper.use((wrapper) ->
-      wrapper.onStream('indicators', (msg) ->
-        print("This is a plugin woooooooot!")
-      )
     )
 
 

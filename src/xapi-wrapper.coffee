@@ -93,13 +93,16 @@ class Wrapper
 
   on: (event, callback) ->
     @_emitter.on(event, callback)
+    return
 
   onStream: (event, callback) ->
     @_streamEmitter.on(event, callback)
+    return
 
   #EXPERIMENTAL
   use: (plugin) ->
     plugin(@)
+    return
 
   getQue: () -> @_connector.getQue()
 
@@ -115,137 +118,181 @@ class Wrapper
     req = @_connector.buildCommand(command, args, req_id.toString())
     #console.log("Sending message #{req}")
     @_connector.send(req)
+    return
 
   _sendStream: (msg) ->
     #print(msg)
     @_connector.sendStream(msg)
+    return
 
   connect: () ->
     @_connector.connect()
+    return
 
   disconnect: () ->
     @_connector.disconnect()
+    return
 
   connectStream: () ->
     @_connector.connectStream()
+    return
 
   disconnectStream: () ->
     @_connector.disconnectStream()
+    return
 
   login: (custom_tag) ->
     @_send('login', {userId: @username, password: @password}, custom_tag)
+    return
 
   logout: (custom_tag) ->
     @_send('logout', null, custom_tag)
+    return
 
   ping: (custom_tag) ->
     @_send('ping', null, custom_tag)
+    return
 
   addOrder: (args, custom_tag) ->
     @_send('addOrder', args, custom_tag)
+    return
 
   closePosition: (args, custom_tag) ->
     @_send('closePosition', args, custom_tag)
+    return
 
   closePositions: (args, custom_tag) ->
     @_send('closePositions', args, custom_tag)
+    return
 
   deletePending: (args, custom_tag) ->
     @_send('deletePending', args, custom_tag)
+    return
 
   getAccountIndicators: (custom_tag) ->
     @_send('getAccountIndicators', null, custom_tag)
+    return
 
   getAccountInfo: (custom_tag) ->
     @_send('getAccountInfo', null, custom_tag)
+    return
 
   getAllSymbols: (custom_tag) ->
     @_send('getAllSymbols', null, custom_tag)
+    return
 
   getCalendar: (custom_tag) ->
     @_send('getCalendar', null, custom_tag)
+    return
 
   getCandles: (args, custom_tag) ->
     @_send('getCandles', args, custom_tag)
+    return
 
   getCashOperationsHistory: (args, custom_tag) ->
     @_send('getCashOperationsHistory', args, custom_tag)
+    return
 
   getCommisionsDef: (args, custom_tag) ->
     @_send('getCommisionsDef', args, custom_tag)
+    return
 
   getlbsHistory: (args, custom_tag) ->
     @_send('getlbsHistory', args, custom_tag)
+    return
 
   getMarginTrade: (args, custom_tag) ->
     @_send('getMarginTrade', args, custom_tag)
+    return
 
   getNews: (args, custom_tag) ->
     @_send('getNews', args, custom_tag)
+    return
 
   getOrderStatus: (args, custom_tag) ->
     @_send('getOrderStatus', args, custom_tag)
+    return
 
   getProfitCalculations: (args, custom_tag) ->
     @_send('getProfitCalculations', args, custom_tag)
+    return
 
   getServerTime: (args, custom_tag) ->
     @_send('getServerTime', args, custom_tag)
+    return
 
   getStepRules: (custom_tag) ->
     @_send('getStepRules', null, custom_tag)
+    return
 
   getSymbol: (args, custom_tag) ->
     @_send('getSymbol', args, custom_tag)
+    return
 
   getTickPrices: (args, custom_tag) ->
     @_send('getTickPrices', args, custom_tag)
+    return
 
   getTradeRecords: (args, custom_tag) ->
     @_send('getTradeRecords', args, custom_tag)
+    return
 
   getTrades: (custom_tag) ->
     @_send('getTrades', null, custom_tag)
+    return
 
   getTradesHistory: (args, custom_tag) ->
     @_send('getTradesHistory', args, custom_tag)
+    return
 
   getTradingHours: (args, custom_tag) ->
     @_send('getTradingHours', args, custom_tag)
+    return
 
   getVersion: (custom_tag) ->
     @_send('getVersion', null, custom_tag)
+    return
 
   modifyPending: (args, custom_tag) ->
     @_send('modifyPending', args, custom_tag)
+    return
 
   modifyPosition: (args, custom_tag) ->
     @_send('modifyPosition', args, custom_tag)
+    return
 
 
   subscribeAccountIndicators: () ->
     @_sendStream(@_connector.buildStreamCommand('getAccountIndicators', @_stream_session_id))
+    return
 
   subscribeCandles: () ->
     @_sendStream(@_connector.buildStreamCommand('getCandles', @_stream_session_id))
+    return
 
   subscribeKeepAlive: () ->
     @_sendStream(@_connector.buildStreamCommand('getKeepAlive', @_stream_session_id))
+    return
 
   subscribeNews: () ->
     @_sendStream(@_connector.buildStreamCommand('getNews', @_stream_session_id))
+    return
 
   subscribeOrderStatus: () ->
     @_sendStream(@_connector.buildStreamCommand('getOrderStatus', @_stream_session_id))
+    return
 
   subscribeProfits: () ->
     @_sendStream(@_connector.buildStreamCommand('getProfits', @_stream_session_id))
+    return
 
   subscribeTickPrices: (symbols) ->
     @_sendStream(@_connector.buildStreamCommand('getTickPrices', @_stream_session_id, symbols))
+    return
 
   subscribeTrades: () ->
     @_sendStream(@_connector.buildStreamCommand('getTrades', @_stream_session_id))
+    return
 
 
 module.exports = Wrapper

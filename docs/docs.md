@@ -108,8 +108,16 @@ Returns the instance password. Password is used to login to xapi
 
 ###Wrapper.conn_status
 
-Returns the current status of the connection
+Returns the current status of the connection:
+- 0: Not connected
+- 1: Connected
+- 2: Closed
+- 3: Error
 
 ###Wrapper.stream_status
 
 Returns the current status of the stream
+- 0: Not connected
+- 1: Connected
+- 2: Closed
+- 3: Error

@@ -61,12 +61,17 @@ Add handlers
 Define handlers for the stream
 
     wrapper.onStream('open', () ->
-      print("Successfuly connected to stream, subscribing to indicators")
+      print("Successfuly connected to stream, subscribing to indicators and EURUSD tick prices")
       wrapper.subscribeAccountIndicators()
+      wrapper.subscribeTickPrices({symbols: ['EURUSD']})
     )
 
     wrapper.onStream('indicators', (msg) ->
       print("Received indicator data: #{JSON.stringify(msg, null, 4)}")
+    )
+
+    wrapper.onStream('tickPrices', (msg) ->
+      print("Received tick prices: #{JSON.stringify(msg, null, 4)}")
     )
 
 

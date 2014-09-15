@@ -80,17 +80,6 @@ class Wrapper
       @_stream_session_id = res.streamSessionId
       )
 
-    @on('apiError', (req, res) ->
-      if req.command == 'login' and res.redirect?
-        print("Server response to login: #{res}")
-        @disconnect()
-        @server_url = res.redirect.address
-        @conn_port = res.redirect.mainPort
-        @stream_port = res.redirect.streamingPort
-        print("Redirecting to server: #{@server_url}, port: #{@conn_port}, stream port: #{stream_port}")
-        @connect()
-      )
-
   on: (event, callback) ->
     @_emitter.on(event, callback)
     return
@@ -266,8 +255,8 @@ class Wrapper
     @_sendStream(@_connector.buildStreamCommand('getAccountIndicators', @_stream_session_id))
     return
 
-  subscribeCandles: () ->
-    @_sendStream(@_connector.buildStreamCommand('getCandles', @_stream_session_id))
+  subscribeCandles: (args) ->
+    @_sendStream(@_connector.buildStreamCommand('getCandles', @_stream_session_id, args))
     return
 
   subscribeKeepAlive: () ->
@@ -286,12 +275,44 @@ class Wrapper
     @_sendStream(@_connector.buildStreamCommand('getProfits', @_stream_session_id))
     return
 
-  subscribeTickPrices: (symbols) ->
-    @_sendStream(@_connector.buildStreamCommand('getTickPrices', @_stream_session_id, symbols))
+  subscribeTickPrices: (args) ->
+    @_sendStream(@_connector.buildStreamCommand('getTickPrices', @_stream_session_id, args))
     return
 
   subscribeTrades: () ->
     @_sendStream(@_connector.buildStreamCommand('getTrades', @_stream_session_id))
+    return
+
+  unsubscribeAccountIndicators: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopAccountIndicators'))
+    return
+
+  unsubscribeCandles: (args) ->
+    @_sendStream(@_connector.buildStreamCommand('stopCandles', args))
+    return
+
+  unsubscribeKeepAlive: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopKeepAlive'))
+    return
+
+  unsubscribeNews: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopNews'))
+    return
+
+  unsubscribeOrderStatus: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopOrderStatus'))
+    return
+
+  unsubscribeProfits: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopProfits'))
+    return
+
+  unsubscribeTickPrices: (args) ->
+    @_sendStream(@_connector.buildStreamCommand('stopTickPrices', args))
+    return
+
+  unsubscribeTrades: () ->
+    @_sendStream(@_connector.buildStreamCommand('stopTrades'))
     return
 
 

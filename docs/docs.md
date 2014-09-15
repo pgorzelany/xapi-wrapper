@@ -6,10 +6,7 @@ The main Wrapper class. By using it you initialize the client. Example:
 
 You can then use the Wrapper methods and properties to interact with xapi.
 
-Options should be an object. Example
-
-    Options =
-      autoReconnect: true
+Options should be an object.
 
 ###Wrapper.connect()
 
@@ -22,32 +19,33 @@ Disconnects from the server
 ###Wrapper.on(event, callback)
 
 Registeres a callback for an event. For events generated on responses to commands, the callback should take 2 arguments (request, response).
+For commands like login, logout etc. the event name is the same as the command name in xAPI specification.
 
 List of events:
 
-- open
+- open: Emitted on connection open
 
-- error
+- error: Emitted on connection close
 
-- close
+- close: Emitted on connection error
 
-- apiError
+- apiError:  Emitted when the response status for a command is equal to false
 
-- login
+- login: Emitted on login
 
-- logout
+- logout: Emitted on logout
 
-- addOrder
+- addOrder: Emitted on response to addOrder command
 
-- closePosition
+- closePosition: Emitted on response to closePosition command
 
-- deletePending
+- deletePending: Emitted on response to deletePending command
 
-- getAccountIndicators
+- getAccountIndicators: Emitted on response to getAccountIndicators command
 
-- getAccountInfo
+- getAccountInfo: Emitted on response to getAccountInfo command
 
-- getAllSymbols
+- getAllSymbols: Emitted on response to getAllSymbols command
 
 ...
 
@@ -55,6 +53,12 @@ List of events:
 
 This method enables external plugins. The plugin is simply a function that should receive 1 parameter (client).
 The plugin function can internally make use of the client (wrapper) methods. For example it can register callbacks for client events.
+
+    plugins = require("xapi-plugins")
+    autoRedirect = plugins.autoRedirect
+
+    wrapper = new Wrapper(SERVER_URL, CONN_PORT, STREAM_PORT, USERNAME, PASSWORD)
+    wrapper.use(autoRedirect)
 
 WARNING: The pugin can alter the way the client works, use with caution (experimental feature)!
 
@@ -70,6 +74,8 @@ Logs out of the server
 
 Sends an order with the specified [arguments](http://developers.xstore.pro/documentation#addOrder).
 
+...
+
 ###Wrapper.connectStream()
 
 Connects to the streaming port
@@ -77,6 +83,12 @@ Connects to the streaming port
 ###Wrapper.disconnectStream()
 
 Disconnects from the streaming port
+
+###Wrapper.subscribeAccountIndicators
+
+Subscribes to stream Account Indicators
+
+....
 
 ###Wrapper.getQue()
 

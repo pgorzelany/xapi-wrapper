@@ -84,7 +84,7 @@ Connects to the streaming port
 
 Disconnects from the streaming port
 
-###Wrapper.subscribeAccountIndicators
+###Wrapper.subscribeAccountIndicators()
 
 Subscribes to stream Account Indicators
 

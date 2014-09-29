@@ -39,18 +39,10 @@ Add handlers
 
     wrapper.on('open', () ->
       print('Successfuly connected, login in')
-      wrapper.login()
-    )
-
-    wrapper.on('login', (req, res) ->
-      print("Succesfuly logged in, connecting to stream")
-      wrapper.connectStream()
-    )
-
-    wrapper.on('logout', (req, res) ->
-      print("Successfuly loged out")
-      wrapper.disconnectStream()
-      wrapper.disconnect()
+      wrapper.login((req, res) ->
+        print("Succesfuly logged in: #{JSON.stringify(res)}, connecting to stream")
+        wrapper.connectStream()
+      )
     )
 
     wrapper.on('apiError', (req, err) ->
@@ -80,5 +72,9 @@ Connect to the api
     wrapper.connect()
     setTimeout(() ->
       print('Login out')
-      wrapper.logout()
+      wrapper.logout((req, res) ->
+        print("Successfuly loged out")
+        wrapper.disconnectStream()
+        wrapper.disconnect()
+      )
     ,10000)

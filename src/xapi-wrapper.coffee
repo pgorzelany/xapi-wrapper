@@ -1,5 +1,6 @@
 Connector = require('xapi-connector')
 Emitter = require('events').EventEmitter
+_ = require('lodash')
 
 print = (msg) -> console.log(msg)
 
@@ -40,13 +41,13 @@ class Wrapper
         if req.customTag? then res.customTag = req.customTag else delete res.customTag
         if res.status == true
           #print("req_id: #{req_id}, requests: #{JSON.stringify(@_requests)}")
-          #@_emitter.emit(req_id, null, req, res) #emits the req_id, this enables callbacks for individual requests
+          @_emitter.emit(req_id, req, res) #emits the req_id, this enables callbacks for individual requests
           @_emitter.emit('_message', req, res, @) #emits a private _message event and passes every message, this enables plugins
           @_emitter.emit(req.command, req, res, @) #emits the command name, this enables event handlers for commands
         else
           @_emitter.emit('apiError', req, res)
       catch e
-        console.log(e)
+        console.log(e.stack)
       )
 
     @_connector.onStream('message', (msg) =>
@@ -56,7 +57,7 @@ class Wrapper
         @_streamEmitter.emit('_message', msg, @) #enables plugins for stream
         @_streamEmitter.emit(msg.command, msg, @)
       catch e
-        console.log(e)
+        console.log(e.stack)
       )
 
     @_connector.onStream('open', () =>
@@ -81,25 +82,22 @@ class Wrapper
       )
 
   on: (event, callback) ->
-    @_emitter.on(event, callback)
+    @_emitter.on(event, callback
     return
 
   onStream: (event, callback) ->
     @_streamEmitter.on(event, callback)
     return
 
-  #EXPERIMENTAL
-  use: (plugin) ->
-    plugin(@)
-    return
-
   getQue: () -> @_connector.getQue()
 
   getStreamQue: () -> @_connector.getStreamQue()
 
-  _send: (command, args, custom_tag) ->
+  _send: (command, args, custom_tag, callback) ->
+    if _.isFunction(custom_tag)
+      [custom_tag, callback] = [null, custom_tag]
     req_id = @_req_id += 1
-    #if callback? then @.on(req_id, callback)
+    if callback? then @.on(req_id, callback)
     @_requests[req_id] =
       command: command,
       arguments: args if args?
@@ -130,124 +128,124 @@ class Wrapper
     @_connector.disconnectStream()
     return
 
-  login: (custom_tag) ->
-    @_send('login', {userId: @username, password: @password}, custom_tag)
+  login: (custom_tag, callback) ->
+    @_send('login', {userId: @username, password: @password}, custom_tag, callback)
     return
 
-  logout: (custom_tag) ->
-    @_send('logout', null, custom_tag)
+  logout: (custom_tag, callback) ->
+    @_send('logout', null, custom_tag, callback)
     return
 
-  ping: (custom_tag) ->
-    @_send('ping', null, custom_tag)
+  ping: (custom_tag, callback) ->
+    @_send('ping', null, custom_tag, callback)
     return
 
-  addOrder: (args, custom_tag) ->
-    @_send('addOrder', args, custom_tag)
+  addOrder: (args, custom_tag, callback) ->
+    @_send('addOrder', args, custom_tag, callback)
     return
 
-  closePosition: (args, custom_tag) ->
-    @_send('closePosition', args, custom_tag)
+  closePosition: (args, custom_tag, callback) ->
+    @_send('closePosition', args, custom_tag, callback)
     return
 
-  closePositions: (args, custom_tag) ->
-    @_send('closePositions', args, custom_tag)
+  closePositions: (args, custom_tag, callback) ->
+    @_send('closePositions', args, custom_tag, callback)
     return
 
-  deletePending: (args, custom_tag) ->
-    @_send('deletePending', args, custom_tag)
+  deletePending: (args, custom_tag, callback) ->
+    @_send('deletePending', args, custom_tag, callback)
     return
 
-  getAccountIndicators: (custom_tag) ->
-    @_send('getAccountIndicators', null, custom_tag)
+  getAccountIndicators: (custom_tag, callback) ->
+    @_send('getAccountIndicators', null, custom_tag, callback)
     return
 
-  getAccountInfo: (custom_tag) ->
-    @_send('getAccountInfo', null, custom_tag)
+  getAccountInfo: (custom_tag, callback) ->
+    @_send('getAccountInfo', null, custom_tag, callback)
     return
 
-  getAllSymbols: (custom_tag) ->
-    @_send('getAllSymbols', null, custom_tag)
+  getAllSymbols: (custom_tag, callback) ->
+    @_send('getAllSymbols', null, custom_tag, callback)
     return
 
-  getCalendar: (custom_tag) ->
-    @_send('getCalendar', null, custom_tag)
+  getCalendar: (custom_tag, callback) ->
+    @_send('getCalendar', null, custom_tag, callback)
     return
 
-  getCandles: (args, custom_tag) ->
-    @_send('getCandles', args, custom_tag)
+  getCandles: (args, custom_tag, callback) ->
+    @_send('getCandles', args, custom_tag, callback)
     return
 
-  getCashOperationsHistory: (args, custom_tag) ->
-    @_send('getCashOperationsHistory', args, custom_tag)
+  getCashOperationsHistory: (args, custom_tag, callback) ->
+    @_send('getCashOperationsHistory', args, custom_tag, callback)
     return
 
-  getCommisionsDef: (args, custom_tag) ->
-    @_send('getCommisionsDef', args, custom_tag)
+  getCommisionsDef: (args, custom_tag, callback) ->
+    @_send('getCommisionsDef', args, custom_tag, callback)
     return
 
-  getlbsHistory: (args, custom_tag) ->
-    @_send('getlbsHistory', args, custom_tag)
+  getlbsHistory: (args, custom_tag, callback) ->
+    @_send('getlbsHistory', args, custom_tag, callback)
     return
 
-  getMarginTrade: (args, custom_tag) ->
-    @_send('getMarginTrade', args, custom_tag)
+  getMarginTrade: (args, custom_tag, callback) ->
+    @_send('getMarginTrade', args, custom_tag, callback)
     return
 
-  getNews: (args, custom_tag) ->
-    @_send('getNews', args, custom_tag)
+  getNews: (args, custom_tag, callback) ->
+    @_send('getNews', args, custom_tag, callback)
     return
 
-  getOrderStatus: (args, custom_tag) ->
-    @_send('getOrderStatus', args, custom_tag)
+  getOrderStatus: (args, custom_tag, callback) ->
+    @_send('getOrderStatus', args, custom_tag, callback)
     return
 
-  getProfitCalculations: (args, custom_tag) ->
-    @_send('getProfitCalculations', args, custom_tag)
+  getProfitCalculations: (args, custom_tag, callback) ->
+    @_send('getProfitCalculations', args, custom_tag, callback)
     return
 
-  getServerTime: (args, custom_tag) ->
-    @_send('getServerTime', args, custom_tag)
+  getServerTime: (args, custom_tag, callback) ->
+    @_send('getServerTime', args, custom_tag, callback)
     return
 
-  getStepRules: (custom_tag) ->
-    @_send('getStepRules', null, custom_tag)
+  getStepRules: (custom_tag, callback) ->
+    @_send('getStepRules', null, custom_tag, callback)
     return
 
-  getSymbol: (args, custom_tag) ->
-    @_send('getSymbol', args, custom_tag)
+  getSymbol: (args, custom_tag, callback) ->
+    @_send('getSymbol', args, custom_tag, callback)
     return
 
-  getTickPrices: (args, custom_tag) ->
-    @_send('getTickPrices', args, custom_tag)
+  getTickPrices: (args, custom_tag, callback) ->
+    @_send('getTickPrices', args, custom_tag, callback)
     return
 
-  getTradeRecords: (args, custom_tag) ->
-    @_send('getTradeRecords', args, custom_tag)
+  getTradeRecords: (args, custom_tag, callback) ->
+    @_send('getTradeRecords', args, custom_tag, callback)
     return
 
-  getTrades: (custom_tag) ->
-    @_send('getTrades', null, custom_tag)
+  getTrades: (custom_tag, callback) ->
+    @_send('getTrades', null, custom_tag, callback)
     return
 
-  getTradesHistory: (args, custom_tag) ->
-    @_send('getTradesHistory', args, custom_tag)
+  getTradesHistory: (args, custom_tag, callback) ->
+    @_send('getTradesHistory', args, custom_tag, callback)
     return
 
-  getTradingHours: (args, custom_tag) ->
-    @_send('getTradingHours', args, custom_tag)
+  getTradingHours: (args, custom_tag, callback) ->
+    @_send('getTradingHours', args, custom_tag, callback)
     return
 
-  getVersion: (custom_tag) ->
-    @_send('getVersion', null, custom_tag)
+  getVersion: (custom_tag, callback) ->
+    @_send('getVersion', null, custom_tag, callback)
     return
 
   modifyPending: (args, custom_tag) ->
-    @_send('modifyPending', args, custom_tag)
+    @_send('modifyPending', args, custom_tag, callback)
     return
 
   modifyPosition: (args, custom_tag) ->
-    @_send('modifyPosition', args, custom_tag)
+    @_send('modifyPosition', args, custom_tag, callback)
     return
 
 

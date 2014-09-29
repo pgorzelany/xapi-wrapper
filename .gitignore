@@ -11,3 +11,5 @@ old_xapi-wrapper.coffee
 old_xapi-wrapper.js
 connector-test.*
 xapi-plugins
+
+Cakefile

@@ -16,7 +16,7 @@
     "stock market api"
   ],
   "author": "Piotr Gorzelany",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "MIT",
   "engines": {
     "node": ">=0.10.0"
@@ -29,11 +29,11 @@
     "url": "https://github.com/pgorzelany/xapi-wrapper"
   },
   "dependencies": {
-    "coffee-script": "1.x",
     "xapi-connector": ">=0.7.0 <2.0.0",
-    "xapi-plugins": "*"
+    "lodash": "2.x"
   },
   "devDependencies": {
+    "coffee-script": "1.x",
     "mocha": "1.x"
   },
   "scripts": {
